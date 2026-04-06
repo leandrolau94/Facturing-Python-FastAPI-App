@@ -37,6 +37,9 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return {"message": "Usuario creado correctamente"}
 
 # Login
+# this function looks for a user by his email, if it doesn´t exist
+# or if the hash password it isn´t valid raised an exception
+# otherwise create the access token for the user login
 @router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
