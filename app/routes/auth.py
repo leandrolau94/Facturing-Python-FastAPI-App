@@ -6,7 +6,7 @@ from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin
 from app.core.security import hash_password, verify_password, create_access_token
 
-router = APIRouter(prefix="auth", tags=["Auth"])
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 # DataBase dependency
 def get_db():
