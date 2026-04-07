@@ -23,11 +23,12 @@ def get_db():
 def create_invoice(
     invoice: InvoiceCreate,
     db: Session = Depends(get_db),
-    current_user: str = Depends(get_current_user)
+    current_user = Depends(get_current_user)
 ):
     new_invoice = Invoice(
         amount=invoice.amount,
-        status="pending"
+        status="pending",
+        user_id=current_user.id
     )
     
     db.add(new_invoice)
