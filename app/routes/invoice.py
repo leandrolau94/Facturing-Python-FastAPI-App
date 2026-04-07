@@ -1,4 +1,9 @@
 from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database import SessionLocal
+from app.models.invoice import Invoice
+from app.schemas.invoice import InvoiceCreate
 from app.core.deps import get_current_user
 
 router = APIRouter(
@@ -6,6 +11,33 @@ router = APIRouter(
     tags=["Invoices"]
 )
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+# endpoint para hacer post y crear factura
+@router.post("/")
+def create_invoice(
+    invoice: InvoiceCreate,
+    db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)
+):
+    new_invoice = Invoice(
+        amount=invoice.amount,
+        status="pending"
+    )
+    
+    db.add(new_invoice)
+    db.commit()
+    db.refresh(new_invoice)
+    
+    return new_invoice
+
+# endpoint para obtener facturas
 @router.get("/")
-def get_invoices(current_user: str = Depends(get_current_user)):
-    return {"message": f"Invoices para {current_user}"}
+def get_invoices(db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
+    invoices = db.query(Invoice).all()
+    return invoices
