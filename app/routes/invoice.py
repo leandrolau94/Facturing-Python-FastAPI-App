@@ -39,6 +39,6 @@ def create_invoice(
 
 # endpoint para obtener facturas
 @router.get("/")
-def get_invoices(db: Session = Depends(get_db), current_user: str = Depends(get_current_user)):
-    invoices = db.query(Invoice).all()
+def get_invoices(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    invoices = db.query(Invoice).filter(Invoice.user_id == current_user.id).all()
     return invoices
