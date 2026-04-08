@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import SessionLocal
@@ -42,3 +42,28 @@ def create_invoice(
 def get_invoices(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     invoices = db.query(Invoice).filter(Invoice.user_id == current_user.id).all()
     return invoices
+
+# endpoint para cambiar estado de factura con put request
+@router.put("/{invoice_id}")
+def update_invoice_status(
+    invoice_id: int,
+    status: str,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    invoice = db.query(Invoice).filter(
+        Invoice.id == invoice_id,
+        Invoice.user_id == current_user.id).first()
+    
+    if not invoice:
+        raise HTTPException(
+            status_code=401,
+            detail="Factura no encontrada"
+        )
+    
+    invoice.status = status
+    
+    db.commit()
+    db.refresh(invoice)
+    
+    return invoice
