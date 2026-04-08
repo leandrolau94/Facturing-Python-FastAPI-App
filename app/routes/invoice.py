@@ -67,3 +67,17 @@ def update_invoice_status(
     db.refresh(invoice)
     
     return invoice
+
+# endpoint para metricas y ver el totatl facturado
+@router.get("/total")
+def get_total(
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    invoices = db.query(Invoice).filter(
+        Invoice.user_id == current_user.id,
+        Invoice.status == "paid").all()
+    
+    total = sum(i.amount for i in invoices)
+    
+    return {"total_paid": total}
