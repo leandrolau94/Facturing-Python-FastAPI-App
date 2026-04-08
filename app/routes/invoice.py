@@ -19,7 +19,7 @@ def get_db():
         db.close()
 
 # valor constante de estados validos del invoice
-VALID_STATUS = ["pending", "paid", "canceled"]
+VALID_STATUSES = ["pending", "paid", "canceled"]
 
 # endpoint para hacer post y crear factura
 @router.post("/")
@@ -55,7 +55,7 @@ def update_invoice_status(
     current_user = Depends(get_current_user)
 ):
     # validacion del status
-    if status not in VALID_STATUS:
+    if status not in VALID_STATUSES:
         raise HTTPException(status_code=400, detail="Estado invalido")
     
     invoice = db.query(Invoice).filter(
