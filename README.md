@@ -37,3 +37,11 @@ API backend profesional para gestión de facturas con autenticación JWT y base 
 ```bash
 curl -X GET http://127.0.0.1:8000/invoices/ \
 -H "Authorization: Bearer TOKEN"
+
+## Instalacion
+- git clone <repo>
+- cd factura_api
+- python -m venv venv
+- venv\Scripts\activate
+- pip install -r requirements.txt
+- uvicorn app.main:app --reload
